@@ -1,6 +1,5 @@
 package mqneo4j
 
-//
 import (
 	"fmt"
 
