@@ -1,4 +1,4 @@
-module mqneo4j
+module github.com/cartathecat/mqneo4j
 
 go 1.15
 
