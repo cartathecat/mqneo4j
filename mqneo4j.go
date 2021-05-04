@@ -130,7 +130,7 @@ func (m *Match) RunQuery(driver neo4j.Driver) (Neo4jAPIResponse, error) {
 		return resp, err
 	}
 
-	//fmt.Println("Session created")
+	log.Print("New session created")
 
 	// Run the query ...
 	respqmgr := make(map[int64]QueueManager)
