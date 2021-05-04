@@ -1,7 +1,9 @@
 package mqneo4j
 
 import (
+	"bytes"
 	"fmt"
+	"log"
 
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 )
@@ -78,15 +80,16 @@ type Match struct {
 	Username            string
 }
 
+var (
+	buf    bytes.Buffer
+	logger = log.New(&buf, "logger: ", log.Lshortfile+log.Ldate+log.Ltime)
+)
+
 /*
 ConnectToNeo4j ...
 */
 func ConnectToNeo4j(uri, username, password string) (neo4j.Driver, error) {
-	fmt.Println("Neo4j init ")
-
-	//	fmt.Printf("URI      :%s\n", uri)
-	//	fmt.Printf("Username :%s\n", username)
-	//	fmt.Printf("Password :%s\n", password)
+	log.Print("Neo4j init ")
 
 	driver, err := neo4j.NewDriver(uri,
 		neo4j.BasicAuth(username, password, ""),
@@ -95,13 +98,13 @@ func ConnectToNeo4j(uri, username, password string) (neo4j.Driver, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Neo4j init done")
+	log.Print("Neo4j init done")
 	return driver, nil
 }
 
 func closeSession(session neo4j.Session) {
 
-	fmt.Println("Closing neo4j session")
+	log.Print("Closing neo4j session")
 	session.Close()
 
 }
@@ -112,7 +115,7 @@ Query the Neo4j database with the query string in the Match struct
 */
 func (m *Match) RunQuery(driver neo4j.Driver) (Neo4jAPIResponse, error) {
 
-	fmt.Println("Running query in RunQuery")
+	//fmt.Println("Running query in RunQuery")
 	//http://doc.we-yun.com:1008/neo4j-doc/others/neo4j-driver-manual-1.7-go.pdf
 	//result, err := session.Run("MATCH p=(q:QueueManager {name: $name})--() RETURN p LIMIT 25", map[string]interface{}{"name": name})
 
@@ -126,7 +129,7 @@ func (m *Match) RunQuery(driver neo4j.Driver) (Neo4jAPIResponse, error) {
 		return resp, err
 	}
 
-	fmt.Println("Session created")
+	//fmt.Println("Session created")
 
 	// Run the query ...
 	respqmgr := make(map[int64]QueueManager)
@@ -136,7 +139,7 @@ func (m *Match) RunQuery(driver neo4j.Driver) (Neo4jAPIResponse, error) {
 	m.Layer = 1
 
 	// Execute the main query ....
-	fmt.Printf("Query: %s\n", m.Neo4jQuery)
+	//fmt.Printf("Query: %s\n", m.Neo4jQuery)
 	resp, err = m.runQueryOnCurrentNode(session, resp, respqmgr, respapp, respconns, false)
 	if err != nil {
 		fmt.Println("Error retruned from runQueryOnCurrentNode")
@@ -152,7 +155,7 @@ func (m *Match) RunQuery(driver neo4j.Driver) (Neo4jAPIResponse, error) {
 			m.Layer++
 			sub, err := m.runQueryOnCurrentNode(session, resp, respqmgr, respapp, respconns, m.IncludeNodes)
 			if err != nil {
-				fmt.Println("Main : " + sub.QueueManagers[0].Name)
+				//fmt.Println("Main : " + sub.QueueManagers[0].Name)
 			}
 			resp = sub
 
@@ -184,7 +187,7 @@ func (m *Match) runQueryOnCurrentNode(session neo4j.Session, resp Neo4jAPIRespon
 
 	result, err := m.executeNeo4jQuery(session)
 	if err != nil {
-		fmt.Printf("%s\n", err)
+		//fmt.Printf("%s\n", err)
 		return resp, err
 	}
 
