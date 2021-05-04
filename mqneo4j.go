@@ -1,6 +1,6 @@
 package mqneo4j
 
-// Neo4j
+// Neo4j v1.0.1
 import (
 	"bytes"
 	"fmt"
